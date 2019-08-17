@@ -25,6 +25,7 @@ workflows:
   int:
     jobs:
       - mruby/test:
+          build_config_file: mruby/build_config.rb
           version: "master"
           filters:
             branches:
