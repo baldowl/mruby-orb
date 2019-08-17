@@ -1,0 +1,44 @@
+description: Run the full test suite
+
+parameters:
+  build_config_file:
+    description: "mruby build config file (relative to project's root)"
+    type: string
+    default: ".ci_build_config.rb"
+
+  mri_image:
+    description: "MRI docker image used to build and run tests"
+    type: string
+    default: "ruby:2.6.3"
+
+  mruby_repository:
+    description: "mruby git repository"
+    type: string
+    default: "https://github.com/mruby/mruby.git"
+
+  system_dependencies:
+    description: "System commands to run before actually building and running tests"
+    type: steps
+    default:
+      - run: apt-get update -qq
+      - run: apt-get install -y -qq bison
+
+  version:
+    description: "Version of mruby to test against"
+    type: string
+
+environment:
+  MRUBY_CONFIG: /project/<< parameters.build_config_file >>
+
+working_directory: /project
+
+docker:
+  - image: << parameters.mri_image >>
+
+steps:
+  - checkout
+  - steps: << parameters.system_dependencies >>
+  - run: git clone --depth 1 --branch << parameters.version >> << parameters.mruby_repository >>
+  - run: |
+      cd mruby
+      ./minirake test

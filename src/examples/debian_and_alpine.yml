@@ -1,0 +1,22 @@
+description: Running tests on Debian and Alpine
+
+usage:
+  version: 2.1
+
+  orbs:
+    mruby: baldowl/mruby@XXX
+
+  workflows:
+    version: 2
+
+    test:
+      jobs:
+        - mruby/test:
+            version: "master"
+
+        - mruby/test:
+            mri_image: "ruby:2.6.3-alpine"
+            system_dependencies:
+              - run: apk update
+              - run: apk add bison build-base git
+            version: "master"
