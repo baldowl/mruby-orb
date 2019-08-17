@@ -16,7 +16,6 @@ workflows:
           requires:
             - orb-tools/pack
       - orb-tools/trigger-integration-workflow:
-          cleanup-tags: true
           ssh-fingerprints: 48:b5:bb:87:2c:32:db:38:da:71:c0:3d:3d:30:dc:17
           requires:
             - orb-tools/publish-dev
