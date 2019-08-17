@@ -10,3 +10,7 @@ workflows:
       - orb-tools/pack:
           requires:
             - orb-tools/lint
+      - orb-tools/publish-dev:
+          orb-name: baldowl/mruby
+          requires:
+            - orb-tools/pack
