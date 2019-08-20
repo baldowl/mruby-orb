@@ -5,7 +5,7 @@ orbs:
   mruby: baldowl/mruby@dev:alpha
 
 workflows:
-  dev:
+  check-and-pack:
     jobs:
       - orb-tools/lint
       - orb-tools/pack:
@@ -16,19 +16,87 @@ workflows:
           requires:
             - orb-tools/pack
       - orb-tools/trigger-integration-workflow:
+          name: trigger-integration-tests-dev
           ssh-fingerprints: 48:b5:bb:87:2c:32:db:38:da:71:c0:3d:3d:30:dc:17
           requires:
             - orb-tools/publish-dev
           filters:
             branches:
               ignore: master
-  int:
+      - orb-tools/trigger-integration-workflow:
+          name: trigger-integration-tests-master
+          cleanup-tags: true
+          ssh-fingerprints: 48:b5:bb:87:2c:32:db:38:da:71:c0:3d:3d:30:dc:17
+          tag: master
+          requires:
+            - orb-tools/publish-dev
+          filters:
+            branches:
+              only: master
+  test-and-publish:
     jobs:
       - mruby/test:
+          name: integration-tests-dev
           build_config_file: mruby/build_config.rb
-          version: "master"
+          mri_image: ruby:2.6.3-slim
+          system_dependencies:
+            - run: apt-get update -qq
+            - run: apt-get install -y -qq bison gcc git
+          version: master
           filters:
             branches:
               ignore: /.*/
             tags:
               only: /integration-.*/
+      - mruby/test:
+          name: integration-tests-master
+          build_config_file: mruby/build_config.rb
+          mri_image: ruby:2.6.3-slim
+          system_dependencies:
+            - run: apt-get update -qq
+            - run: apt-get install -y -qq bison gcc git
+          version: master
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-.*/
+      - orb-tools/dev-promote-prod:
+          name: dev-promote-patch
+          cleanup-tags: true
+          orb-name: baldowl/mruby
+          release: patch
+          ssh-fingerprints: 48:b5:bb:87:2c:32:db:38:da:71:c0:3d:3d:30:dc:17
+          requires:
+            - integration-tests-master
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-patch-.*/
+      - orb-tools/dev-promote-prod:
+          name: dev-promote-minor
+          cleanup-tags: true
+          orb-name: baldowl/mruby
+          release: minor
+          ssh-fingerprints: 48:b5:bb:87:2c:32:db:38:da:71:c0:3d:3d:30:dc:17
+          requires:
+            - integration-tests-master
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-minor-.*/
+      - orb-tools/dev-promote-prod:
+          name: dev-promote-major
+          cleanup-tags: true
+          orb-name: baldowl/mruby
+          release: major
+          ssh-fingerprints: 48:b5:bb:87:2c:32:db:38:da:71:c0:3d:3d:30:dc:17
+          requires:
+            - integration-tests-master
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-major-.*/
