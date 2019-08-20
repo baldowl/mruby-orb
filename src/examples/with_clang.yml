@@ -12,8 +12,8 @@ usage:
     test:
       jobs:
         - mruby/test:
-            mri_image: "ruby:2.6.3-slim"
+            mri_image: ruby:2.6.3-slim
             system_dependencies:
               - run: apt-get update -qq
               - run: apt-get install -y -qq bison clang git
-            version: "master"
+            version: master

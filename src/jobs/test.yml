@@ -4,27 +4,27 @@ parameters:
   build_config_file:
     description: "mruby build config file (relative to project's root)"
     type: string
-    default: ".ci_build_config.rb"
+    default: .ci_build_config.rb
 
   mri_image:
-    description: "MRI docker image used to build and run tests"
+    description: MRI docker image used to build and run tests
     type: string
-    default: "ruby:2.6.3"
+    default: ruby:2.6.3
 
   mruby_repository:
-    description: "mruby git repository"
+    description: mruby git repository
     type: string
-    default: "https://github.com/mruby/mruby.git"
+    default: https://github.com/mruby/mruby.git
 
   system_dependencies:
-    description: "System commands to run before actually building and running tests"
+    description: System commands to run before actually building and running tests
     type: steps
     default:
       - run: apt-get update -qq
       - run: apt-get install -y -qq bison
 
   version:
-    description: "Version of mruby to test against"
+    description: Version of mruby to test against
     type: string
 
 environment:

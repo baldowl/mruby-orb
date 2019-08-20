@@ -12,11 +12,11 @@ usage:
     test:
       jobs:
         - mruby/test:
-            version: "master"
+            version: master
 
         - mruby/test:
-            mri_image: "ruby:2.6.3-alpine"
+            mri_image: ruby:2.6.3-alpine
             system_dependencies:
               - run: apk update
               - run: apk add bison build-base git
-            version: "master"
+            version: master

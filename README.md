@@ -16,10 +16,10 @@ workflows:
   test:
     jobs:
       - mruby/test:
-          version: "2.0.1"
+          version: 2.0.1
 
       - mruby/test:
-          version: "master"
+          version: master
 ```
 
 ## License
