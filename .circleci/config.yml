@@ -4,6 +4,17 @@ orbs:
   orb-tools: circleci/orb-tools@8.27.4
   mruby: baldowl/mruby@dev:alpha
 
+build_mruby: &build_mruby
+  build_config_file: mruby/build_config.rb
+  mri_image: ruby:2.6.3-slim
+  system_dependencies:
+    - run: apt-get update -qq
+    - run: apt-get install -y -qq bison gcc git
+  version: master
+
+private-ssh-key: &private_ssh_key
+  ssh-fingerprints: 48:b5:bb:87:2c:32:db:38:da:71:c0:3d:3d:30:dc:17
+
 workflows:
   check-and-pack:
     jobs:
@@ -17,7 +28,7 @@ workflows:
             - orb-tools/pack
       - orb-tools/trigger-integration-workflow:
           name: trigger-integration-tests-dev
-          ssh-fingerprints: 48:b5:bb:87:2c:32:db:38:da:71:c0:3d:3d:30:dc:17
+          <<: *private_ssh_key
           requires:
             - orb-tools/publish-dev
           filters:
@@ -26,7 +37,7 @@ workflows:
       - orb-tools/trigger-integration-workflow:
           name: trigger-integration-tests-master
           cleanup-tags: true
-          ssh-fingerprints: 48:b5:bb:87:2c:32:db:38:da:71:c0:3d:3d:30:dc:17
+          <<: *private_ssh_key
           tag: master
           requires:
             - orb-tools/publish-dev
@@ -37,12 +48,7 @@ workflows:
     jobs:
       - mruby/test:
           name: integration-tests-dev
-          build_config_file: mruby/build_config.rb
-          mri_image: ruby:2.6.3-slim
-          system_dependencies:
-            - run: apt-get update -qq
-            - run: apt-get install -y -qq bison gcc git
-          version: master
+          <<: *build_mruby
           filters:
             branches:
               ignore: /.*/
@@ -50,12 +56,7 @@ workflows:
               only: /integration-.*/
       - mruby/test:
           name: integration-tests-master
-          build_config_file: mruby/build_config.rb
-          mri_image: ruby:2.6.3-slim
-          system_dependencies:
-            - run: apt-get update -qq
-            - run: apt-get install -y -qq bison gcc git
-          version: master
+          <<: *build_mruby
           filters:
             branches:
               ignore: /.*/
@@ -66,7 +67,7 @@ workflows:
           cleanup-tags: true
           orb-name: baldowl/mruby
           release: patch
-          ssh-fingerprints: 48:b5:bb:87:2c:32:db:38:da:71:c0:3d:3d:30:dc:17
+          <<: *private_ssh_key
           requires:
             - integration-tests-master
           filters:
@@ -79,7 +80,7 @@ workflows:
           cleanup-tags: true
           orb-name: baldowl/mruby
           release: minor
-          ssh-fingerprints: 48:b5:bb:87:2c:32:db:38:da:71:c0:3d:3d:30:dc:17
+          <<: *private_ssh_key
           requires:
             - integration-tests-master
           filters:
@@ -92,7 +93,7 @@ workflows:
           cleanup-tags: true
           orb-name: baldowl/mruby
           release: major
-          ssh-fingerprints: 48:b5:bb:87:2c:32:db:38:da:71:c0:3d:3d:30:dc:17
+          <<: *private_ssh_key
           requires:
             - integration-tests-master
           filters:
