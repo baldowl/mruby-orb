@@ -101,3 +101,21 @@ workflows:
               ignore: /.*/
             tags:
               only: /master-major-.*/
+  refresh-dev-version:
+    triggers:
+      - schedule:
+          cron: "0 5 1 * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - orb-tools/lint
+      - orb-tools/pack:
+          requires:
+            - orb-tools/lint
+      - orb-tools/publish-dev:
+          orb-name: baldowl/mruby
+          publish-sha-version: false
+          requires:
+            - orb-tools/pack
