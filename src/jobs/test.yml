@@ -21,7 +21,7 @@ parameters:
     type: steps
     default:
       - run: apt-get update -qq
-      - run: apt-get install -y -qq bison
+      - run: apt-get install -y -qq bison git
 
   version:
     description: Version of mruby to test against
@@ -36,8 +36,8 @@ docker:
   - image: << parameters.mri_image >>
 
 steps:
-  - checkout
   - steps: << parameters.system_dependencies >>
+  - checkout
   - run: git clone --depth 1 --branch << parameters.version >> << parameters.mruby_repository >>
   - run: |
       cd mruby
