@@ -15,7 +15,7 @@ usage:
             version: master
 
         - mruby/test:
-            mri_image: ruby:2.6.5-alpine
+            mri_image: ruby:2.7.0-alpine
             system_dependencies:
               - run: apk update
               - run: apk add bison build-base git

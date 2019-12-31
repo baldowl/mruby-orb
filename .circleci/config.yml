@@ -6,7 +6,7 @@ orbs:
 
 build_mruby: &build_mruby
   build_config_file: mruby/build_config.rb
-  mri_image: ruby:2.6.5-slim
+  mri_image: ruby:2.7.0-slim
   system_dependencies:
     - run: apt-get update -qq
     - run: apt-get install -y -qq bison gcc git
