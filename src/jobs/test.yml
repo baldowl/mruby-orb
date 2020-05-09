@@ -9,7 +9,7 @@ parameters:
   mri_image:
     description: MRI docker image used to build and run tests
     type: string
-    default: ruby:2.7.0
+    default: ruby:2.7.1
 
   mruby_repository:
     description: mruby git repository

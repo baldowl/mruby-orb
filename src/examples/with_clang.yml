@@ -12,7 +12,7 @@ usage:
     test:
       jobs:
         - mruby/test:
-            mri_image: ruby:2.7.0-slim
+            mri_image: ruby:2.7.1-slim
             system_dependencies:
               - run: apt-get update -qq
               - run: apt-get install -y -qq bison clang git
