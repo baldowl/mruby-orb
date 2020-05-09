@@ -1,22 +1,20 @@
 version: 2.1
 
+parameters:
+  dev-orb-version:
+    type: string
+    default: dev:alpha
+  run-integration-tests:
+    type: boolean
+    default: false
+
 orbs:
-  orb-tools: circleci/orb-tools@8.27.4
-  mruby: baldowl/mruby@dev:alpha
-
-build_mruby: &build_mruby
-  build_config_file: mruby/build_config.rb
-  mri_image: ruby:2.7.0-slim
-  system_dependencies:
-    - run: apt-get update -qq
-    - run: apt-get install -y -qq bison gcc git
-  version: master
-
-private-ssh-key: &private_ssh_key
-  ssh-fingerprints: 48:b5:bb:87:2c:32:db:38:da:71:c0:3d:3d:30:dc:17
+  orb-tools: circleci/orb-tools@9.1.0
+  mruby: baldowl/mruby@<< pipeline.parameters.dev-orb-version >>
 
 workflows:
   check-and-pack:
+    unless: << pipeline.parameters.run-integration-tests >>
     jobs:
       - orb-tools/lint
       - orb-tools/pack:
@@ -26,81 +24,30 @@ workflows:
           orb-name: baldowl/mruby
           requires:
             - orb-tools/pack
-      - orb-tools/trigger-integration-workflow:
-          name: trigger-integration-tests-dev
-          <<: *private_ssh_key
+      - orb-tools/trigger-integration-tests-workflow:
           requires:
             - orb-tools/publish-dev
-          filters:
-            branches:
-              ignore: master
-      - orb-tools/trigger-integration-workflow:
-          name: trigger-integration-tests-master
-          cleanup-tags: true
-          <<: *private_ssh_key
-          tag: master
+  test-and-publish:
+    when: << pipeline.parameters.run-integration-tests >>
+    jobs:
+      - mruby/test:
+          build_config_file: mruby/build_config.rb
+          mri_image: ruby:2.7.0-slim
+          system_dependencies:
+            - run: apt-get update -qq
+            - run: apt-get install -y -qq bison gcc git
+          version: master
+      - orb-tools/dev-promote-prod-from-commit-subject:
+          add-pr-comment: false
+          fail-if-semver-not-indicated: false
+          orb-name: baldowl/mruby
+          publish-version-tag: true
+          ssh-fingerprints: 48:b5:bb:87:2c:32:db:38:da:71:c0:3d:3d:30:dc:17
           requires:
-            - orb-tools/publish-dev
+            - mruby/test
           filters:
             branches:
               only: master
-  test-and-publish:
-    jobs:
-      - mruby/test:
-          name: integration-tests-dev
-          <<: *build_mruby
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /integration-.*/
-      - mruby/test:
-          name: integration-tests-master
-          <<: *build_mruby
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-.*/
-      - orb-tools/dev-promote-prod:
-          name: dev-promote-patch
-          cleanup-tags: true
-          orb-name: baldowl/mruby
-          release: patch
-          <<: *private_ssh_key
-          requires:
-            - integration-tests-master
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-patch-.*/
-      - orb-tools/dev-promote-prod:
-          name: dev-promote-minor
-          cleanup-tags: true
-          orb-name: baldowl/mruby
-          release: minor
-          <<: *private_ssh_key
-          requires:
-            - integration-tests-master
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-minor-.*/
-      - orb-tools/dev-promote-prod:
-          name: dev-promote-major
-          cleanup-tags: true
-          orb-name: baldowl/mruby
-          release: major
-          <<: *private_ssh_key
-          requires:
-            - integration-tests-master
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-major-.*/
   refresh-dev-version:
     triggers:
       - schedule:
