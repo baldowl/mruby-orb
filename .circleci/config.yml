@@ -31,6 +31,7 @@ workflows:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
       - mruby/test:
+          build_command: rake
           build_config_file: mruby/build_config.rb
           mri_image: ruby:2.7.1-slim
           system_dependencies:

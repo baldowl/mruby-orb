@@ -1,6 +1,11 @@
 description: Run the full test suite
 
 parameters:
+  build_command:
+    description: Command used to build and run tests
+    type: string
+    default: rake test
+
   build_config_file:
     description: "mruby build config file (relative to project's root)"
     type: string
@@ -41,4 +46,4 @@ steps:
   - run: git clone --depth 1 --branch << parameters.version >> << parameters.mruby_repository >>
   - run: |
       cd mruby
-      ./minirake test
+      << parameters.build_command >>
