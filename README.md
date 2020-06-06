@@ -1,4 +1,4 @@
-# mruby-orb
+# mruby-orb [![CircleCI status](https://circleci.com/gh/baldowl/mruby-orb.svg "CircleCI status")](https://circleci.com/gh/baldowl/mruby-orb) [![CircleCI Orb Version](https://img.shields.io/badge/endpoint.svg?url=https://badges.circleci.io/orb/baldowl/mruby)](https://circleci.com/orbs/registry/orb/baldowl/mruby) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/baldowl/mruby-orb/master/LICENSE)
 
 An experiment/toy.
 
