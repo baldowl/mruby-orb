@@ -52,7 +52,7 @@ workflows:
   refresh-dev-version:
     triggers:
       - schedule:
-          cron: "0 5 1 * *"
+          cron: "35 15 * * 6"
           filters:
             branches:
               only:
