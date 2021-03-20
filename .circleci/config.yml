@@ -33,7 +33,7 @@ workflows:
       - mruby/test:
           build_command: rake
           build_config_file: mruby/build_config/default.rb
-          mri_image: ruby:2.7.1-slim
+          mri_image: ruby:3.0.0-slim
           system_dependencies:
             - run: apt-get update -qq
             - run: apt-get install -y -qq gcc git
