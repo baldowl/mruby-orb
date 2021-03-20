@@ -9,7 +9,7 @@ parameters:
     default: false
 
 orbs:
-  orb-tools: circleci/orb-tools@9.1.0
+  orb-tools: circleci/orb-tools@10.0.3
   mruby: baldowl/mruby@<< pipeline.parameters.dev-orb-version >>
 
 workflows:
