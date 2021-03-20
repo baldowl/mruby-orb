@@ -32,11 +32,11 @@ workflows:
     jobs:
       - mruby/test:
           build_command: rake
-          build_config_file: mruby/build_config.rb
+          build_config_file: mruby/build_config/default.rb
           mri_image: ruby:2.7.1-slim
           system_dependencies:
             - run: apt-get update -qq
-            - run: apt-get install -y -qq bison gcc git
+            - run: apt-get install -y -qq gcc git
           version: master
       - orb-tools/dev-promote-prod-from-commit-subject:
           add-pr-comment: false
