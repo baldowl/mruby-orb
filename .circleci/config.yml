@@ -51,7 +51,7 @@ workflows:
           fail-if-semver-not-indicated: false
           orb-name: baldowl/mruby
           publish-version-tag: true
-          ssh-fingerprints: 37:84:5f:ac:c5:80:cb:32:a5:8a:a2:42:d4:48:11:68
+          ssh-fingerprints: e0:cc:ef:fd:d3:80:72:70:ab:67:f0:bc:65:fd:b4:9a
           requires:
             - mruby/test
           filters:
